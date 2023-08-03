@@ -1,54 +1,46 @@
-from CarGameEnviroment import CarGameEnviroment
-import numpy as np
-from agent import Agent
+import ppo
+import CarGameEnviroment
+import gym
+import time
+import matplotlib.pyplot as plt
+import matplotlib
 
 
-if __name__ == '__main__':
-    env = CarGameEnviroment()
-    N = 20
-    batch_size = 5
-    n_epochs = 4
-    alpha = 0.0003
-    agent = Agent(n_actions=env.num_actions, batch_size=batch_size,
-                  alpha=alpha, n_epochs=n_epochs,
-                  )
-    agent.load_models()
-    n_games = 30000
 
-    figure_file = 'plots/cartpole.png'
+time_s = time.time()
+env = CarGameEnviroment.CarGameEnviroment()
 
-    best_score = float("-inf")
-    score_history = []
+agent = ppo.PPO(env, 0.000001)
+losses_actor, losses_critic = agent.learn(10000, 20000, 5, 0.2)
 
-    learn_iters = 0
-    avg_score = 0
-    n_steps = 0
+plt.figure()
+plt.plot(range(len(losses_actor)), losses_actor, marker='o', linestyle='-', color='b', label='Data')
 
-    for i in range(n_games):
-        observation = env.reset()
-        done = False
-        score = 0
-        if i % 100 == 9:
-            agent.save_models()
-        while not done:
-            action, prob, val = agent.choose_action(observation)
-            observation_, reward, done, info = env.step(action)
-            n_steps += 1
-            score += reward
-            agent.store_transition(observation, action,
-                                   prob, val, reward, done)
-            if n_steps % N == 0:
-                agent.learn()
-                learn_iters += 1
-            observation = observation_
-        score_history.append(score)
-        avg_score = np.mean(score_history[-100:])
 
-        if avg_score > best_score:
-            best_score = avg_score
-            agent.save_models()
+# Add labels and title
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.title('Sample Data Plot')
 
-        print('episode', i, 'score %.1f' % score, 'avg score %.1f' % avg_score,
-              'time_steps', n_steps, 'learning_steps', learn_iters)
-    x = [i+1 for i in range(len(score_history))]
+# Save the plot to a file
+plt.savefig('actor.png')
 
+# Close the plot (optional, but recommended)
+plt.close()
+
+plt.figure()
+plt.plot(range(len(losses_critic)), losses_critic, marker='o', linestyle='-', color='b', label='Data')
+
+
+# Add labels and title
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.title('Sample Data Plot')
+
+# Save the plot to a file
+plt.savefig('critic.png')
+
+# Close the plot (optional, but recommended)
+plt.close()
+
+print(time.time() - time_s)

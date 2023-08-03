@@ -1,33 +1,24 @@
-import tensorflow.keras as keras
-from tensorflow.keras.layers import Dense
+import torch
+from torch import nn
+import torch.nn.functional as F
+import numpy as np
 
+class FeedForwardNN(nn.Module):
+    def __init__(self, in_dim, out_dim):
+        super(FeedForwardNN, self).__init__()
 
-class ActorNetwork(keras.Model):
-    def __init__(self, n_actions, fc1_dims=256, fc2_dims=256):
-        super(ActorNetwork, self).__init__()
+        self.layer1 = nn.Linear(in_dim, 1024)
+        self.layer2 = nn.Linear(1024, 1024)
+        self.layer3 = nn.Linear(1024, out_dim)
+    
+    def forward(self, obs):
+        # Convert observation to tensor if it's a numpy array
+        if isinstance(obs, np.ndarray) or isinstance(obs, list):
+            obs = torch.tensor(obs, dtype=torch.float)
+        
+        activation1 = F.relu(self.layer1(obs))
+        activation2 = F.relu(self.layer2(activation1))
+        output = self.layer3(activation2)
+        
+        return output
 
-        self.fc1 = Dense(fc1_dims, activation='relu')
-        self.fc2 = Dense(fc2_dims, activation='relu')
-        self.fc3 = Dense(n_actions, activation='softmax')
-
-    def call(self, state):
-        x = self.fc1(state)
-        x = self.fc2(x)
-        x = self.fc3(x)
-
-        return x
-
-
-class CriticNetwork(keras.Model):
-    def __init__(self, fc1_dims=256, fc2_dims=256):
-        super(CriticNetwork, self).__init__()
-        self.fc1 = Dense(fc1_dims, activation='relu')
-        self.fc2 = Dense(fc2_dims, activation='relu')
-        self.q = Dense(1, activation=None)
-
-    def call(self, state):
-        x = self.fc1(state)
-        x = self.fc2(x)
-        q = self.q(x)
-
-        return q
