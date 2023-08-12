@@ -7,9 +7,9 @@ class FeedForwardNN(nn.Module):
     def __init__(self, in_dim, out_dim):
         super(FeedForwardNN, self).__init__()
 
-        self.layer1 = nn.Linear(in_dim, 1024)
-        self.layer2 = nn.Linear(1024, 1024)
-        self.layer3 = nn.Linear(1024, out_dim)
+        self.layer1 = nn.Linear(in_dim, 256)
+        self.layer2 = nn.Linear(256, 256)
+        self.layer3 = nn.Linear(256, out_dim)
     
     def forward(self, obs):
         # Convert observation to tensor if it's a numpy array

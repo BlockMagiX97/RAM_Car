@@ -20,7 +20,7 @@ class CarGameEnviroment:
 
 		self.is_running = True
 
-		self.font = pygame.font.Font('freesansbold.ttf', 32)
+		
  
 		# create a text surface object,
 		# on which text is drawn on it.
@@ -28,10 +28,7 @@ class CarGameEnviroment:
 		
 		# create a rectangular object for the
 		# text surface object
-		self.text = self.font.render(str(self.policy_loss), True, (0, 255, 0), (0, 0, 255))
-		self.textRect = self.text.get_rect()
-		self.textRect.centerx = self.screen_width // 2
-		self.textRect.centery =self.screen_height // 2 -120
+
 
 		# When resizing adjust it
 		self.goal_lines = [Line_Segment(Point(1131, 154), Point(1181, 374)), Line_Segment(Point(1319, 94), Point(1350, 369)), Line_Segment(Point(1488, 108), Point(1432, 361)), Line_Segment(Point(1782, 202), Point(1537, 394)), Line_Segment(Point(1570, 406), Point(1897, 446)), Line_Segment(Point(1852, 598), Point(1528, 626)), Line_Segment(Point(1492, 738), Point(1790, 864)), Line_Segment(Point(1432, 851), Point(1559, 1065)), Line_Segment(Point(1318, 849), Point(1230, 1052)), Line_Segment(Point(1064, 903), Point(1222, 657)), Line_Segment(Point(1012, 756), Point(959, 482)), Line_Segment(Point(668, 643), Point(795, 868)), Line_Segment(Point(565, 713), Point(506, 956)), Line_Segment(Point(351, 700), Point(212, 909)), Line_Segment(Point(313, 664), Point(32, 529)), Line_Segment(Point(479, 551), Point(163, 436)), Line_Segment(Point(429, 365), Point(146, 336)), Line_Segment(Point(433, 247), Point(176, 176))]
@@ -51,12 +48,10 @@ class CarGameEnviroment:
 
 		#Grafic config
 		
-		self.car_image = pygame.image.load("car.png")
-		self.car_image = pygame.transform.scale(self.car_image, (self.car_width, self.car_height))
-		self.car_rect = self.car_image.get_rect()
 
-		self.bg_image = pygame.image.load("Map2.png")
-		self.bg_image = pygame.transform.scale(self.bg_image, (self.screen_width, self.screen_height))
+		self.car_rect = pygame.rect.Rect(0,0,self.car_width, self.car_height)
+
+
 
 
 		# Game init
@@ -110,8 +105,8 @@ class CarGameEnviroment:
 		self.car_y += car_accel_y
 
 
-		rotated_car = pygame.transform.rotate(self.car_image, self.car_angle)
-		rotated_car_rect = rotated_car.get_rect()
+		
+		rotated_car_rect = pygame.rect.Rect(0,0,self.car_width,self.car_height)
 		rotated_car_rect.center = (self.car_x + self.car_width // 2 - 0 * math.cos(math.radians(self.car_angle)),
 								self.car_y + self.car_height // 2 + 0 * math.sin(math.radians(self.car_angle)))
 
@@ -175,13 +170,6 @@ class CarGameEnviroment:
 			reward -= midpoint.distance_to(goal.midpoint())
 			midpoint = goal.midpoint()
 		
-		
-	
-
-		self.text = self.font.render(self.policy_loss, True, (0, 255, 0), (0, 0, 255))
-		self.textRect = self.text.get_rect()
-		self.textRect.centerx = self.screen_width // 2
-		self.textRect.centery =self.screen_height // 2 -120
 		
 
 		next_state = np.concatenate(([self.car_angle % 360 / 360], [self.car_speed / self.max_speed], distances / np.array(2203)))
