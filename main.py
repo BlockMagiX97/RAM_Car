@@ -11,11 +11,14 @@ if __name__ == '__main__':
     logging.basicConfig(filename='run.log', 
                     level=logging.DEBUG, 
                     format='%(asctime)s - %(name)s - %(threadName)s -  %(levelname)s - %(message)s') 
+    logging.debug("Started") # for identifing separate starts of training program
     time_s = time.time()
     env = CarGameEnviroment.CarGameEnviroment()
     torch.multiprocessing.set_start_method('spawn')
     agent = ppo.PPO(env, 0.000001)
     losses_actor, losses_critic = agent.learn(10000, 20, 5, 0.2)
+
+    # plotting graphs
 
     plt.figure()
     plt.plot(range(len(losses_actor)), losses_actor, marker='o', linestyle='-', color='b', label='Data')
