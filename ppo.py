@@ -22,6 +22,7 @@ class PPO:
 		logging.debug(f"Load previus models: {load_previus_models}")
 		logging.debug(f"Learning rate: {learning_rate}")
 		self.env = env
+  self.steps_per_action = 4
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		
 
@@ -104,8 +105,14 @@ class PPO:
 					action, log_prob = self.get_action(obs)
 					
 					action_one = np.random.choice(action.size, p = convert_to_probs(action))
+
+	   for _ in range(self.steps_per_action):
+        self.env.step(action_one)
+
 					obs, rew, done, _ = self.env.step(action_one)
-					
+
+				
+
 					# Collect reward, action, and log prob
 					ep_rews.append(rew)
 					batch_acts.append(action)
